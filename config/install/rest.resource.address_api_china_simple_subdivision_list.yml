@@ -1,0 +1,21 @@
+langcode: zh-hans
+status: true
+dependencies:
+  module:
+    - address_api
+    - basic_auth
+    - serialization
+    - simple_oauth
+    - user
+id: address_api_china_simple_subdivision_list
+plugin_id: address_api_china_simple_subdivision_list
+granularity: resource
+configuration:
+  methods:
+    - GET
+  formats:
+    - json
+  authentication:
+    - basic_auth
+    - oauth2
+    - cookie

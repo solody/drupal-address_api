@@ -1,0 +1,61 @@
+<?php
+
+/**
+ * @file
+ * Contains address_api.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\user\RoleInterface;
+
+/**
+ * Implements hook_help().
+ */
+function address_api_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the address_api module.
+    case 'help.page.address_api':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides REST API for address module.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function address_api_theme() {
+  return [
+    'address_api' => [
+      'render element' => 'children',
+    ],
+  ];
+}
+
+
+/**
+ * Implements hook_install().
+ */
+function address_api_install()
+{
+    $permissions = [
+        'restful post address_api_query_subdivisions',
+        'restful get address_api_china_simple_subdivision_list'
+    ];
+
+    // 添加权限
+    user_role_grant_permissions(RoleInterface::ANONYMOUS_ID, $permissions);
+    user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, $permissions);
+
+    $permissions = [
+        'view profile',
+        'create customer profile',
+        'update own customer profile',
+        'delete own customer profile',
+        'view own customer profile'
+    ];
+    user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, $permissions);
+}

@@ -1,0 +1,13 @@
+name: 'Address API'
+type: module
+description: 'Provides REST API for address module.'
+core: 8.x
+package: Custom
+dependencies:
+  - address
+  - address_api
+  - basic_auth
+  - rest
+  - serialization
+  - simple_oauth
+  - user

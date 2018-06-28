@@ -1,0 +1,14 @@
+{
+  "name": "drupal/address_api",
+  "type": "drupal-module",
+  "description": "Provides REST API for address module.",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/address_api",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/address_api",
+    "source": "http://cgit.drupalcode.org/address_api"
+  },
+  "require": { }
+}
