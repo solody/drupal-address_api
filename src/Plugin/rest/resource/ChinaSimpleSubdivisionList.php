@@ -80,7 +80,7 @@ class ChinaSimpleSubdivisionList extends ResourceBase
             $container->getParameter('serializer.formats'),
             $container->get('logger.factory')->get('address_api'),
             $container->get('current_user'),
-            $container->get('address.subdivision_repository')
+            $container->get('address_api.iso_code_order_subdivision_repository')
         );
     }
 

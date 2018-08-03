@@ -1,0 +1,4 @@
+services:
+  address_api.iso_code_order_subdivision_repository:
+    class: Drupal\address_api\Repository\ISOCodeOrderSubdivisionRepository
+    arguments: ['@address.address_format_repository', '@event_dispatcher', '@cache.data']
