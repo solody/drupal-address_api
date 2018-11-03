@@ -104,7 +104,8 @@ class ChinaSimpleSubdivisionList extends ResourceBase {
     foreach ($provinces as $province_code => $province_name) {
       $data[] = [
         'name' => $province_name,
-        'value' => $province_code
+        'value' => $province_code,
+        'original_value' => $province_code
       ];
     }
 
@@ -114,7 +115,8 @@ class ChinaSimpleSubdivisionList extends ResourceBase {
       foreach ($cities as $city_code => $city_name) {
         $data[] = [
           'name' => $city_name,
-          'value' => $city_code,
+          'value' => $province_code.'-'.$city_code,
+          'original_value' => $city_code,
           'parent' => $province_code
         ];
 
@@ -123,15 +125,17 @@ class ChinaSimpleSubdivisionList extends ResourceBase {
           foreach ($districts as $district_code => $district_name) {
             $data[] = [
               'name' => $district_name,
-              'value' => $district_code,
-              'parent' => $city_code
+              'value' => $province_code.'-'.$city_code.'-'.$district_code,
+              'original_value' => $district_code,
+              'parent' => $province_code.'-'.$city_code
             ];
           }
         } else {
           $data[] = [
             'name' => '',
             'value' => '',
-            'parent' => $city_code
+            'original_value' => '',
+            'parent' => $province_code.'-'.$city_code
           ];
         }
       }
