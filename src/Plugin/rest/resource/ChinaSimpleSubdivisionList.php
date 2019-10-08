@@ -92,12 +92,6 @@ class ChinaSimpleSubdivisionList extends ResourceBase {
    */
   public function get() {
 
-    // You must to implement the logic of your REST Resource here.
-    // Use current user after pass authentication to validate access.
-    if (!$this->currentUser->hasPermission('access content')) {
-      throw new AccessDeniedHttpException();
-    }
-
     // 生成数据
     $data = [];
     $provinces = $this->subdivisionRepository->getList(['CN'], 'zh-hans');
