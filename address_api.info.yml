@@ -1,13 +1,12 @@
 name: 'Address API'
 type: module
-description: 'Provides REST API for address module.'
-core: 8.x
+description: 'Provide api to fetch administration are data for address field.'
+core_version_requirement: ^10 || ^11
 package: Custom
 dependencies:
-  - address
-  - address_api
-  - basic_auth
-  - rest
-  - serialization
-  - simple_oauth
-  - user
+  - address:address
+  - drupal:basic_auth
+  - drupal:rest
+  - drupal:serialization
+  - simple_oauth:simple_oauth
+  - drupal:user

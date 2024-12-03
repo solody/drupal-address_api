@@ -11,36 +11,23 @@ use Drupal\user\RoleInterface;
 /**
  * Implements hook_help().
  */
-function address_api_help($route_name, RouteMatchInterface $route_match) {
+function address_api_help($route_name, RouteMatchInterface $route_match): string {
   switch ($route_name) {
     // Main module help for the address_api module.
     case 'help.page.address_api':
-      $output = '';
-      $output .= '<h3>' . t('About') . '</h3>';
+      $output = '<h3>' . t('About') . '</h3>';
       $output .= '<p>' . t('Provides REST API for address module.') . '</p>';
       return $output;
 
     default:
+      return '';
   }
 }
 
 /**
- * Implements hook_theme().
- */
-function address_api_theme() {
-  return [
-    'address_api' => [
-      'render element' => 'children',
-    ],
-  ];
-}
-
-
-/**
  * Implements hook_install().
  */
-function address_api_install()
-{
+function address_api_install(): void {
     $permissions = [
         'restful post address_api_query_subdivisions',
         'restful get address_api_china_simple_subdivision_list'

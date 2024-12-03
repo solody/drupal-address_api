@@ -8,7 +8,6 @@ use Drupal\rest\ModifiedResourceResponse;
 use Drupal\rest\Plugin\ResourceBase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * Provides a resource to get view modes by entity and bundle.
@@ -21,20 +20,21 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  *   }
  * )
  */
-class QuerySubdivisions extends ResourceBase
-{
+class QuerySubdivisions extends ResourceBase {
 
   /**
    * A current user instance.
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
-   * @var SubdivisionRepositoryInterface
+   * The SubdivisionRepository service instance.
+   *
+   * @var \CommerceGuys\Addressing\Subdivision\SubdivisionRepositoryInterface
    */
-  protected $subdivisionRepository;
+  protected SubdivisionRepositoryInterface $subdivisionRepository;
 
   /**
    * Constructs a new QuerySubdivisions object.
@@ -51,6 +51,8 @@ class QuerySubdivisions extends ResourceBase
    *   A logger instance.
    * @param \Drupal\Core\Session\AccountProxyInterface $current_user
    *   A current user instance.
+   * @param \CommerceGuys\Addressing\Subdivision\SubdivisionRepositoryInterface $subdivision_repository
+   *   The SubdivisionRepository service instance.
    */
   public function __construct(
     array $configuration,
@@ -59,8 +61,8 @@ class QuerySubdivisions extends ResourceBase
     array $serializer_formats,
     LoggerInterface $logger,
     AccountProxyInterface $current_user,
-    SubdivisionRepositoryInterface $subdivision_repository)
-  {
+    SubdivisionRepositoryInterface $subdivision_repository,
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $serializer_formats, $logger);
 
     $this->currentUser = $current_user;
@@ -70,8 +72,7 @@ class QuerySubdivisions extends ResourceBase
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition)
-  {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $configuration,
       $plugin_id,
@@ -79,14 +80,14 @@ class QuerySubdivisions extends ResourceBase
       $container->getParameter('serializer.formats'),
       $container->get('logger.factory')->get('address_api'),
       $container->get('current_user'),
-      $container->get('address_api.iso_code_order_subdivision_repository')
+      $container->get('address.subdivision_repository')
     );
   }
 
   /**
    * Responds to POST requests.
    *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
+   * @param array $condition
    *   The entity object.
    *
    * @return \Drupal\rest\ModifiedResourceResponse
@@ -95,15 +96,14 @@ class QuerySubdivisions extends ResourceBase
    * @throws \Symfony\Component\HttpKernel\Exception\HttpException
    *   Throws exception expected.
    */
-  public function post($condistion)
-  {
-    $list = $this->subdivisionRepository->getList($condistion['parents'], $condistion['locale']);
+  public function post(array $data): ModifiedResourceResponse {
+    $list = $this->subdivisionRepository->getList($data['parents'], $data['locale']);
     $data = [];
 
     foreach ($list as $key => $value) {
       $data[] = [
         'value' => $key,
-        'name' => $value
+        'name' => $value,
       ];
     }
 
