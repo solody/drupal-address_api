@@ -13,14 +13,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Provides a resource to get view modes by entity and bundle.
  *
  * @RestResource(
- *   id = "address_api_query_subdivisions",
- *   label = @Translation("Query subdivisions"),
+ *   id = "address_api_query_subdivision_values_by_name",
+ *   label = @Translation("Query subdivision values by name"),
  *   uri_paths = {
- *     "create" = "/api/rest/address-api/query-subdivisions"
+ *     "create" = "/api/rest/address-api/query-subdivision-values-by-name"
  *   }
  * )
  */
-class QuerySubdivisions extends ResourceBase {
+class QuerySubdivisionValuesByName extends ResourceBase {
 
   /**
    * A current user instance.
@@ -87,7 +87,7 @@ class QuerySubdivisions extends ResourceBase {
   /**
    * Responds to POST requests.
    *
-   * @param array $condition
+   * @param array $data
    *   The entity object.
    *
    * @return \Drupal\rest\ModifiedResourceResponse
@@ -97,17 +97,24 @@ class QuerySubdivisions extends ResourceBase {
    *   Throws exception expected.
    */
   public function post(array $data): ModifiedResourceResponse {
-    $list = $this->subdivisionRepository->getList($data['parents'], $data['locale']);
-    $data = [];
 
-    foreach ($list as $key => $value) {
-      $data[] = [
-        'value' => $key,
-        'name' => $value,
-      ];
+    $parents = [$data['country']];
+    $subdivisions = $this->subdivisionRepository->getList($parents, $data['locale']);
+
+    $values = [];
+
+    foreach ($data['names'] as $name) {
+      foreach ($subdivisions as $subdivision_code => $subdivision_name) {
+        if ($subdivision_name === $name) {
+          $values[$name] = $subdivision_code;
+          $parents[] = $subdivision_code;
+          $subdivisions = $this->subdivisionRepository->getList($parents, $data['locale']);
+          break;
+        }
+      }
     }
 
-    return new ModifiedResourceResponse($data, 200);
+    return new ModifiedResourceResponse($values, 200);
   }
 
 }

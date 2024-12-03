@@ -17,7 +17,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  *   id = "address_api_china_simple_subdivision_list",
  *   label = @Translation("China simple subdivision list"),
  *   uri_paths = {
- *     "canonical" = "/api/rest/address/china-simple-subdivision-list"
+ *     "canonical" = "/api/rest/address-api/china-simple-subdivision-list"
  *   }
  * )
  */
