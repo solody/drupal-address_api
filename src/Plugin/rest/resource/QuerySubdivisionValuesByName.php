@@ -106,7 +106,7 @@ class QuerySubdivisionValuesByName extends ResourceBase {
     foreach ($data['names'] as $name) {
       foreach ($subdivisions as $subdivision_code => $subdivision_name) {
         if ($subdivision_name === $name) {
-          $values[$name] = $subdivision_code;
+          $values[] = $subdivision_code;
           $parents[] = $subdivision_code;
           $subdivisions = $this->subdivisionRepository->getList($parents, $data['locale']);
           break;

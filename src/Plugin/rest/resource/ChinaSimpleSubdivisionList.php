@@ -8,7 +8,6 @@ use Drupal\rest\Plugin\ResourceBase;
 use Drupal\rest\ResourceResponse;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * Provides a resource to get view modes by entity and bundle.
@@ -32,7 +31,9 @@ class ChinaSimpleSubdivisionList extends ResourceBase {
 
 
   /**
-   * @var SubdivisionRepositoryInterface
+   * The SubdivisionRepository service.
+   *
+   * @var \CommerceGuys\Addressing\Subdivision\SubdivisionRepositoryInterface
    */
   protected $subdivisionRepository;
 
@@ -51,6 +52,8 @@ class ChinaSimpleSubdivisionList extends ResourceBase {
    *   A logger instance.
    * @param \Drupal\Core\Session\AccountProxyInterface $current_user
    *   A current user instance.
+   * @param \CommerceGuys\Addressing\Subdivision\SubdivisionRepositoryInterface $subdivision_repository
+   *   The SubdivisionRepository service.
    */
   public function __construct(
     array $configuration,
@@ -59,7 +62,8 @@ class ChinaSimpleSubdivisionList extends ResourceBase {
     array $serializer_formats,
     LoggerInterface $logger,
     AccountProxyInterface $current_user,
-    SubdivisionRepositoryInterface $subdivision_repository) {
+    SubdivisionRepositoryInterface $subdivision_repository,
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $serializer_formats, $logger);
 
     $this->currentUser = $current_user;
@@ -90,16 +94,16 @@ class ChinaSimpleSubdivisionList extends ResourceBase {
    * @throws \Symfony\Component\HttpKernel\Exception\HttpException
    *   Throws exception expected.
    */
-  public function get() {
+  public function get(): ResourceResponse {
 
-    // 生成数据
+    // 生成数据.
     $data = [];
     $provinces = $this->subdivisionRepository->getList(['CN'], 'zh-hans');
     foreach ($provinces as $province_code => $province_name) {
       $data[] = [
         'name' => $province_name,
         'value' => $province_code,
-        'original_value' => $province_code
+        'original_value' => $province_code,
       ];
     }
 
@@ -109,9 +113,9 @@ class ChinaSimpleSubdivisionList extends ResourceBase {
       foreach ($cities as $city_code => $city_name) {
         $data[] = [
           'name' => $city_name,
-          'value' => $province_code.'-'.$city_code,
+          'value' => $province_code . '-' . $city_code,
           'original_value' => $city_code,
-          'parent' => $province_code
+          'parent' => $province_code,
         ];
 
         $districts = $this->subdivisionRepository->getList(['CN', $province_code, $city_code], 'zh-hans');
@@ -119,24 +123,24 @@ class ChinaSimpleSubdivisionList extends ResourceBase {
           foreach ($districts as $district_code => $district_name) {
             $data[] = [
               'name' => $district_name,
-              'value' => $province_code.'-'.$city_code.'-'.$district_code,
+              'value' => $province_code . '-' . $city_code . '-' . $district_code,
               'original_value' => $district_code,
-              'parent' => $province_code.'-'.$city_code
+              'parent' => $province_code . '-' . $city_code,
             ];
           }
-        } else {
+        }
+        else {
           $data[] = [
             'name' => '',
             'value' => '',
             'original_value' => '',
-            'parent' => $province_code.'-'.$city_code
+            'parent' => $province_code . '-' . $city_code,
           ];
         }
       }
     }
 
-    $response = new ResourceResponse($data, 200);
-    return $response;
+    return new ResourceResponse($data, 200);
   }
 
 }
