@@ -10,5 +10,8 @@
     "issues": "https://www.drupal.org/project/issues/address_api",
     "source": "http://cgit.drupalcode.org/address_api"
   },
-  "require": { }
+  "require": {
+      "drupal/address": "^2.0",
+      "drupal/simple_oauth": "^6.0"
+  }
 }
